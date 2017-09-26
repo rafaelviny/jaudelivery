@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+	<properties>
+		<!-- Configuração Padrão -->
+		<property name="securityHandler" 		value="br.com.db1.security.parameterHandler.DB1SecurityParameterHandler" />
+		<property name="sessionHandler" 		value="br.com.db1.myBatisPersistence.executor.parameter.DB1SessionParameterHandler" />
+		<property name="statementDefault" 		value="br.com.db1.myBatisPersistence.mappers.commomMapper.statementDefault" />
+		<property name="statementInsertDefault" value="br.com.db1.myBatisPersistence.mappers.commomMapper.statementInsertDefault" />
+		<property name="statementUpdateDefault" value="br.com.db1.myBatisPersistence.mappers.commomMapper.statementUpdateDefault" />
+		<property name="statementDeleteDefault" value="br.com.db1.myBatisPersistence.mappers.commomMapper.statementDeleteDefault" />
+		<property name="statementGenerator" 	value="br.com.db1.myBatisPersistence.mappers.commomMapper.statementGenerator" />
+	</properties>
+
+	<typeAliases>
+	
+		<!-- Entidades -->
+
+		<typeAlias alias="Usuario" 						type="py.com.concepto.model.entity.Usuario"/>
+		<typeAlias alias="Empresa" 						type="py.com.concepto.model.entity.Empresa"/>
+		<typeAlias alias="Filial" 						type="py.com.concepto.model.entity.Filial"/>
+		<typeAlias alias="UsuarioFilial" 				type="py.com.concepto.model.entity.UsuarioFilial"/>
+
+		<typeAlias alias="Produto"       				type="py.com.concepto.model.entity.Produto"/>
+		<typeAlias alias="Classificacao"       			type="py.com.concepto.model.entity.Classificacao"/>
+		<typeAlias alias="Delivery"       				type="py.com.concepto.model.entity.Delivery"/>
+		<typeAlias alias="DeliveryItem"       			type="py.com.concepto.model.entity.DeliveryItem"/>
+		<typeAlias alias="Sabor"	       				type="py.com.concepto.model.entity.Sabor"/>
+		<typeAlias alias="Cliente"	       				type="py.com.concepto.model.entity.Cliente"/>
+		<typeAlias alias="Troco"	       				type="py.com.concepto.model.entity.Troco"/>
+		<typeAlias alias="ProdutoSabor"	       			type="py.com.concepto.model.entity.ProdutoSabor"/>
+		<typeAlias alias="Cidade"	       				type="py.com.concepto.model.entity.Cidade"/>
+		<typeAlias alias="Opcional"	       				type="py.com.concepto.model.entity.Opcional"/>
+		<typeAlias alias="ProdutoOpcional"	       		type="py.com.concepto.model.entity.ProdutoOpcional"/>
+		<typeAlias alias="Reclamacao"	       			type="py.com.concepto.model.entity.Reclamacao"/>
+		<typeAlias alias="Parametros"	       			type="py.com.concepto.model.entity.Parametros"/>
+	       
+		
+		
+		<!--handlers -->
+		<typeAlias alias="DateTypeHandler" 				type="org.apache.ibatis.type.DateTypeHandler" />		
+		
+	</typeAliases>
+
+	<mappers>
+		<!-- Padrão -->
+		<mapper resource="br/com/db1/myBatisPersistence/mappers/commomMapper.xml" />
+		
+		<mapper resource="py/com/concepto/model/entity/EmpresaMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/FilialMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/UsuarioMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/UsuarioFilialMapper.xml" />
+		
+		<!-- Projeto Mappers -->
+		<mapper resource="py/com/concepto/model/entity/ProdutoMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ClassificacaoMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/DeliveryMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/DeliveryItemMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/SaborMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ClienteMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ProdutoSaborMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/CidadeMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/TrocoMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/OpcionalMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ProdutoOpcionalMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ReclamacaoMapper.xml" />
+		<mapper resource="py/com/concepto/model/entity/ParametrosMapper.xml" />
+ 		</mappers>
+
+</configuration>

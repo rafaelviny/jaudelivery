@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ClienteMapper">
+	<resultMap id="resultId" type="Cliente">
+		<id property="id" column="ID_CLIENTE" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Cliente" extends="resultId">
+		<result property="idFacebook" column="ID_FACEBOOK" />
+		<result property="idOneSignal" column="ID_ONE_SIGNAL" />
+		<result property="nome" column="NM_CLIENTE" />
+		<result property="nomeFacebook" column="NM_FACEBOOK_CLIENTE" />
+		<result property="telefone" column="TELEFONE" />
+		<result property="avaliacao" column="AVALIACAO" />
+		<result property="endereco1" column="ENDERECO_1" />
+		<result property="endereco2" column="ENDERECO_2" />
+		<result property="endereco3" column="ENDERECO_3" />
+		<result property="desenvolvedor" column="BO_DESENVOLVEDOR" />
+
+		<association property="filial" column="ID_PROPRIETARIO"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_PROPRIETARIO" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="Cliente" extends="resultSimples">
+		<collection property="reclamacoes" ofType="Reclamacao"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.ReclamacaoMapper.findReclamacaoesByCliente"
+			column="{idCliente=ID_CLIENTE}" />
+	</resultMap>
+
+	<select id="defaultClienteId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<select id="findCliente" resultMap="result">
+		SELECT * FROM bs_cliente
+		WHERE ${condition}
+	</select>
+
+	<select id="defaultCliente" resultMap="resultSimples">
+		${clause}
+	</select>
+
+	<select id="findClienteByFacebookID" resultMap="result">
+		SELECT * FROM
+		bs_cliente WHERE ID_FACEBOOK = #{idFacebook}
+	</select>
+
+	<select id="findClienteById" parameterType="hashMap" resultType="Cliente"
+		resultMap="result">
+		select * from bs_cliente where id_cliente = #{idCliente}
+	</select>
+
+
+
+
+
+</mapper>

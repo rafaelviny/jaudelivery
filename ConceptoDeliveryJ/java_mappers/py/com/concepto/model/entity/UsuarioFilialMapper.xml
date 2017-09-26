@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.UsuarioFilialMapper">
+	<resultMap id="resultId" type="UsuarioFilial">
+		<id property="id" column="ID_USUARIO_FILIAL" javaType="Long"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="resultSimples" type="UsuarioFilial" extends="resultId">
+		
+		<association property="filial" column="ID_FILIAL"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_FILIAL" javaType="Long" jdbcType="VARCHAR" />
+			<result property="ruc" column="RUC" />
+		<result property="descricao" column="DS_FILIAL" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="ativo" column="ATIVO" javaType="Boolean"
+			jdbcType="BOOLEAN" />
+		</association>
+		<association property="usuario" column="ID_USUARIO"
+			javaType="Usuario" jdbcType="VARCHAR">
+			<id property="id" column="ID_USUARIO" javaType="Long" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="result" type="UsuarioFilial" extends="resultSimples" />
+	
+	
+	<select id="findUsuarioFilial" resultMap="resultSimples">select * from
+		sys_suario_filial WHERE ${condition}</select>
+	<select id="defaultUsuarioFilialId" resultMap="resultId">${clause}</select>
+	<select id="defaultUsuarioFilial" resultMap="resultSimples">${clause}</select>
+	
+	
+	<!-- USADO POR OUTROS MAPPERS -->
+	<select id="findListUsuarioFilialByUsuarioId" resultMap="result" parameterType="hashMap">
+		select usuario_filial.*, filial.* from sys_usuario_filial usuario_filial inner join sys_usuario usuario on usuario.id_usuario = usuario_filial.id_usuario inner join filial on filial.id_filial = usuario_filial.id_filial
+		where usuario.id_usuario =  #{idUsuario}
+	</select>
+</mapper>

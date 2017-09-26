@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.TrocoMapper">
+	<resultMap id="resultId" type="Troco">
+		<id property="id" column="ID_TROCO" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Troco" extends="resultId">
+		<result property="valor" column="VL_TROCO" />
+		<result property="moeda" column="DS_MOEDA" />
+
+
+		<association property="delivery" column="ID_DELIVERY"
+			javaType="Delivery">
+			<id property="id" column="ID_DELIVERY" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="Troco" extends="resultSimples">
+	</resultMap>
+
+	<select id="defaultTrocoId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<select id="findTroco" resultMap="result">
+		SELECT * FROM ven_troco WHERE
+		${condition}
+	</select>
+
+	<select id="defaultTroco" resultMap="resultSimples">
+		${clause}
+	</select>
+
+
+
+	<select id="findTrocoByDelivery" resultMap="result"
+		parameterType="hashMap">
+		SELECT * FROM ven_troco WHERE ID_DELIVERY = #{idDelivery}
+	</select>
+
+
+
+
+</mapper>

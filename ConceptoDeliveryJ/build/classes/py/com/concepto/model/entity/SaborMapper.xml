@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.SaborMapper">
+	<resultMap id="resultId" type="Sabor">
+		<id property="id" column="ID_SABOR"  />
+	</resultMap>
+	
+	<resultMap id="resultSimples" type="Sabor" extends="resultId">
+		<result property="descricao" column="DS_SABOR"/>
+		<result property="titulo" column="TT_SABOR"/>
+		<result property="vlPreco" column="VL_PRECO" />
+		<result property="ativo" column="BO_ATIVO"/>
+		
+		<association property="produto" column="ID_PRODUTO"
+			javaType="Produto">
+			<id property="id" column="ID_PRODUTO" />
+		</association>
+		
+	</resultMap>
+	
+	<resultMap id="result" type="Sabor" extends="resultSimples" />
+	
+	<select id="defaultSaborId" resultMap="resultId">
+		${clause}
+	</select>
+	
+	<select id="findSabor" resultMap="result">
+		select * from bs_sabor WHERE ${condition} 
+	</select>
+		
+	<select id="defaultSabor" resultMap="resultSimples">
+		${clause}
+	</select>
+	
+	
+	<!-- ********************************** SELECTS DE MAPPERS EXTERNOS  ********************************** -->
+	
+	<select id="findSaboresByProduto" resultMap="resultSimples" parameterType="hashMap">
+		select * from bs_sabor where id_produto = #{idProduto} order by ID_SABOR desc
+	</select>
+
+	<select id="findSaboresByDelvieryItem" resultMap="resultSimples" parameterType="hashMap">
+		select * from bs_sabor where ID_DELIVERY_ITEM = #{idDeliveryItem}
+	</select>
+	
+	<select id="findSaboresByProdutoAndroid" resultMap="resultSimples" parameterType="hashMap">
+		select * from bs_sabor where id_produto = #{idProduto} and bo_ativo = true
+	</select>
+	
+	<select id="findSaboresByDelvieryItemAndroid" resultMap="resultSimples" parameterType="hashMap">
+		select * from bs_sabor where ID_DELIVERY_ITEM = #{idDeliveryItem} and bo_ativo = true
+	</select>
+	
+	
+	
+	
+	
+</mapper>

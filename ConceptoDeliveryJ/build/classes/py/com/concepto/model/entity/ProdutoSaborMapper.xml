@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ProdutoSaborMapper">
+	<resultMap id="resultId" type="ProdutoSabor">
+		<id property="id" column="ID_PRODUTO_SABOR" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="ProdutoSabor" extends="resultId">
+
+		<association property="deliveryItem" column="ID_DELIVERY_ITEM" javaType="DeliveryItem">
+			<id property="id" column="ID_DELIVERY_ITEM" />
+		</association>
+
+		<association property="sabor" column="ID_SABOR"
+			javaType="Sabor">
+			<id property="id" column="ID_SABOR" />
+			<result property="titulo" column="TT_SABOR"/>
+			<result property="vlPreco" column="VL_PRECO" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="ProdutoSabor" extends="resultSimples">
+	</resultMap>
+
+	<select id="defaultProdutoSaborId" resultMap="resultId">
+		${clause}
+	</select>
+
+
+	<select id="findProdutoSabor" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ${condition}
+	</select>
+
+	<sql id="sqlDefault">
+		SELECT 
+		  * 
+		FROM
+		  ven_produto_sabor ven_produto_sabor 
+		  INNER JOIN bs_sabor s 
+		    ON s.ID_SABOR = ven_produto_sabor.ID_SABOR 
+	</sql>
+
+	<select id="defaultProdutoSabor" resultMap="resultSimples">
+		${clause}
+	</select>
+
+
+
+	<select id="findProdutoSaborByItemDelivery" resultMap="resultSimples"
+		parameterType="hashMap">
+		<include refid="sqlDefault" />
+		 where ven_produto_sabor.ID_DELIVERY_ITEM = #{idItemDelivery}
+	</select>
+
+
+
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.EmpresaMapper">
+	<resultMap id="resultId" type="Empresa">
+		<id property="id" column="ID_EMPRESA" javaType="Long" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Empresa" extends="resultId">
+		<result property="codigo" column="CD_EMPRESA" />
+		<result property="descricao" column="DS_EMPRESA" />
+		<result property="subtitulo" column="SUB_TITULO" />
+		<result property="ativo" column="BO_ATIVO"  />
+		<result property="aberto" column="BO_ABERTO"  />
+	</resultMap>
+
+	<resultMap id="result" type="Empresa" extends="resultSimples">
+<!-- 			<collection property="filialList" column="{idEmpresa=ID_EMPRESA}" javaType="ArrayList" -->
+<!-- 			ofType="y.com.concepto.sysposto.model.entity.Filial" jdbcType="VARCHAR" select="py.com.concepto.sysposto.model.entity.FilialMapper.findListFilialByEmpresaId"/> -->
+	</resultMap>
+
+  	<sql id="sqlDefault">
+		select * from empresa
+  </sql>
+
+	<select id="defaultEmpresaId" resultMap="resultId">${clause}</select>
+
+	<select id="defaultEmpresa">
+		${clause}
+	</select>
+
+	<select id="findEmpresa" resultMap="result">
+			<include refid="sqlDefault" />
+			WHERE ${condition} and bo_ativo = true
+	</select>
+
+
+
+</mapper>

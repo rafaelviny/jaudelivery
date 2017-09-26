@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.DeliveryMapper">
+	<resultMap id="resultId" type="Delivery">
+		<id property="id" column="ID_DELIVERY" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Delivery" extends="resultId">
+		<result property="token" column="TOKEN" />
+		<result property="endereco" column="ENDERECO_CLIENTE" />
+		<result property="vlTotal" column="VL_TOTAL" />
+		<result property="confirmado" column="BO_CONFIRMADO" />
+		<result property="enviado" column="BO_ENVIADO" />
+		<result property="rejeitado" column="BO_REJEITADO" />
+		<result property="dtDelivery" column="DT_DELIVERY" />
+		<result property="avaliacao" column="AVALIACAO_CLIENTE" />
+		<result property="comentarioCliente" column="COMENTARIO_CLIENTE" />
+
+		<association property="cliente" column="ID_CLIENTE"
+			javaType="Cliente" jdbcType="VARCHAR">
+			<id property="id" column="ID_CLIENTE" />
+			<result property="idFacebook" column="ID_FACEBOOK" />
+			<result property="nome" column="NM_CLIENTE" />
+			<result property="nomeFacebook" column="NM_FACEBOOK_CLIENTE" />
+			<result property="telefone" column="TELEFONE" />
+			<result property="avaliacao" column="AVALIACAO" />
+		</association>
+
+		<association property="filial" column="ID_FILIAL"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_FILIAL" />
+			<result property="descricao" column="DS_FILIAL" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="Delivery" extends="resultSimples">
+		<collection property="itens" ofType="DeliveryItem"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.DeliveryItemMapper.findItemDeliveryByDelivery"
+			column="{idDelivery=ID_DELIVERY}" />
+
+		<collection property="trocos" ofType="Troco"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.TrocoMapper.findTrocoByDelivery"
+			column="{idDelivery=ID_DELIVERY}" />
+	</resultMap>
+
+	<select id="defaultDeliveryId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<select id="findDelivery" resultMap="result">
+		SELECT * FROM ven_delivery
+		WHERE ${condition}
+	</select>
+
+	<select id="defaultDelivery" resultMap="resultSimples">
+		${clause}
+	</select>
+
+	<sql id="sqlDefault">
+		SELECT
+		ven_delivery.*,
+		c.*,
+		f.ID_FILIAL,
+		f.DS_FILIAL
+		FROM
+		ven_delivery ven_delivery
+		INNER JOIN bs_cliente c
+		ON c.ID_CLIENTE = ven_delivery.ID_CLIENTE
+		inner join filial f on f.id_filial = ven_delivery.id_filial
+	</sql>
+
+	<select id="findDeliverysPendentesEntrega" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ven_delivery.BO_ENVIADO = FALSE AND ven_delivery.BO_REJEITADO = FALSE and ven_delivery.ID_FILIAL = #{idEmpresa} order by ven_delivery.ID_DELIVERY desc
+	</select>
+
+	<update id="deliveryConfirmado">
+		update ven_delivery set BO_CONFIRMADO = true where
+		ID_DELIVERY = #{id}
+	</update>
+
+	<update id="deliveryRejeitado">
+		update ven_delivery set BO_REJEITADO = true where
+		ID_DELIVERY = #{id}
+	</update>
+
+	<update id="deliveryEnviado">
+		update ven_delivery set BO_ENVIADO = true where
+		ID_DELIVERY = #{id}
+	</update>
+
+
+	<select id="findUltimos5Deliverys" resultMap="resultSimples">
+		<include refid="sqlDefault" />
+		WHERE ven_delivery.id_cliente = #{idCliente} and ven_delivery.id_filial = #{idEmpresa} and ven_delivery.bo_confirmado = true order by
+		ven_delivery.id_delivery desc limit 5
+	</select>
+
+	<select id="findDeliverysDoDia" resultMap="resultSimples">
+		<include refid="sqlDefault" />
+		WHERE ven_delivery.id_filial = #{idEmpresa} and date(ven_delivery.dt_delivery) = date(NOW())
+	</select>
+
+	<select id="findAvaliacaoCliente" resultMap="resultSimples">
+		<include refid="sqlDefault" />
+		WHERE ven_delivery.id_filial = #{idEmpresa} and ven_delivery.AVALIACAO_CLIENTE is not null
+	</select>
+	
+	<select id="findGraficoDeliveryDiario" resultType="py.com.concepto.model.entity.dto.GraficoVendasDto">
+		SELECT 
+		  DATE_FORMAT(d.DT_DELIVERY, '%d') AS diaMes,
+		  SUM(d.VL_TOTAL) AS total 
+		FROM
+		  ven_delivery d 
+		WHERE DATE_FORMAT(d.DT_DELIVERY, '%m') = DATE_FORMAT(NOW(), '%m') 
+		  AND DATE_FORMAT(d.DT_DELIVERY, '%YYYY') = DATE_FORMAT(NOW(), '%YYYY') 
+		  and d.id_filial = #{idEmpresa} and d.bo_confirmado = true
+		GROUP BY DATE_FORMAT(d.DT_DELIVERY, '%d') ORDER BY DATE_FORMAT(d.DT_DELIVERY, '%d') 
+	</select>
+	
+	<select id="findGraficoDeliveryMensal" resultType="py.com.concepto.model.entity.dto.GraficoVendasDto">
+		SELECT 
+		  DATE_FORMAT(d.DT_DELIVERY, '%m') AS diaMes,
+		  SUM(d.VL_TOTAL) AS total 
+		FROM
+		  ven_delivery d 
+		WHERE  DATE_FORMAT(d.DT_DELIVERY, '%YYYY') = DATE_FORMAT(NOW(), '%YYYY')  and d.id_filial = #{idEmpresa} and d.bo_confirmado = true
+		GROUP BY DATE_FORMAT(d.DT_DELIVERY, '%m') ORDER BY DATE_FORMAT(d.DT_DELIVERY, '%m') 
+	</select>
+	
+	<select id="findGraficoAvaliacaoDiario" resultType="py.com.concepto.model.entity.dto.GraficoVendasDto">
+		SELECT 
+		  DATE_FORMAT(d.DT_DELIVERY, '%d') AS diaMes,
+		  AVG(d.AVALIACAO_CLIENTE) AS total 
+		FROM
+		  ven_delivery d 
+		WHERE DATE_FORMAT(d.DT_DELIVERY, '%m') = DATE_FORMAT(NOW(), '%m') 
+		  AND DATE_FORMAT(d.DT_DELIVERY, '%YYYY') = DATE_FORMAT(NOW(), '%YYYY') 
+		  AND d.id_filial = #{idEmpresa} AND d.AVALIACAO_CLIENTE IS NOT NULL
+		GROUP BY DATE_FORMAT(d.DT_DELIVERY, '%d') ORDER BY DATE_FORMAT(d.DT_DELIVERY, '%d') 
+	</select>
+	
+	<select id="findGraficoAvaliacaoMensal" resultType="py.com.concepto.model.entity.dto.GraficoVendasDto">
+		SELECT 
+		  DATE_FORMAT(d.DT_DELIVERY, '%m') AS diaMes,
+		   AVG(d.AVALIACAO_CLIENTE) AS total 
+		FROM
+		  ven_delivery d 
+		WHERE  DATE_FORMAT(d.DT_DELIVERY, '%YYYY') = DATE_FORMAT(NOW(), '%YYYY')  and d.id_filial = #{idEmpresa} AND d.AVALIACAO_CLIENTE IS NOT NULL
+		GROUP BY DATE_FORMAT(d.DT_DELIVERY, '%m') ORDER BY DATE_FORMAT(d.DT_DELIVERY, '%m') 
+	</select>
+
+	<select id="findRelatorioDelivery" resultType="py.com.concepto.model.entity.dto.RelatorioDeliveryDto">
+		SELECT
+			SUM(ven_delivery.VL_TOTAL) AS totalDelivery,
+			f.DS_FILIAL AS nomeFilial,
+			SUM(ven_delivery.VL_TOTAL) * 0.02 AS totalFlex
+		FROM
+			ven_delivery
+			INNER JOIN filial f
+			ON f.ID_FILIAL = VEN_DELIVERY.ID_FILIAL
+		WHERE ${condition} AND ven_delivery.BO_REJEITADO = FALSE
+		GROUP BY f.ID_FILIAL DESC 
+	</select>
+</mapper>

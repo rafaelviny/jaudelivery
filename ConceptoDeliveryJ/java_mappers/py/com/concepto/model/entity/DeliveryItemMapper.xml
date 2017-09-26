@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.DeliveryItemMapper">
+	<resultMap id="resultId" type="DeliveryItem">
+		<id property="id" column="ID_DELIVERY_ITEM" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="DeliveryItem" extends="resultId">
+		<result property="vlPreco" column="VL_PRECO" />
+		<result property="quantidade" column="QTD_PRODUTO" />
+		<result property="vlTotal" column="VL_TOTAL" />
+		<result property="observacao" column="OBSERVACAO" />
+
+		<association property="produto" column="ID_PRODUTO"
+			javaType="Produto">
+			<id property="id" column="ID_PRODUTO" />
+			<result property="titulo" column="TT_PRODUTO" />
+		</association>
+
+		<association property="delivery" column="ID_DELIVERY"
+			javaType="Delivery">
+			<id property="id" column="ID_DELIVERY" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="DeliveryItem" extends="resultSimples">
+		<collection property="produtoSabores" ofType="ProdutoSabor"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.ProdutoSaborMapper.findProdutoSaborByItemDelivery"
+			column="{idItemDelivery=ID_DELIVERY_ITEM}" />
+
+		<collection property="produtoOpcionais" ofType="ProdutoOpcional"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.ProdutoOpcionalMapper.findProdutoOpcionalByItemDelivery"
+			column="{idItemDelivery=ID_DELIVERY_ITEM}" />
+	</resultMap>
+
+	<select id="defaultDeliveryItemId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<sql id="sqlDefault">
+		SELECT * FROM ven_delivery_item ven_delivery_item INNER
+		JOIN bs_produto p ON
+		p.ID_PRODUTO = ven_delivery_item.ID_PRODUTO
+	</sql>
+	
+
+	<select id="findDeliveryItem" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ${condition}
+	</select>
+
+
+	<select id="defaultDeliveryItem" resultMap="resultSimples">
+		${clause}
+	</select>
+
+
+	<select id="findItemDeliveryByDelivery" resultMap="result"
+		parameterType="hashMap">
+		<include refid="sqlDefault" />
+		 where ID_DELIVERY = #{idDelivery}
+	</select>
+
+
+
+
+</mapper>

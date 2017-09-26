@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ProdutoMapper">
+	<resultMap id="resultId" type="Produto">
+		<id property="id" column="ID_PRODUTO" javaType="Long" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="resultSimples" type="Produto" extends="resultId">
+		<result property="descricao" column="DS_PRODUTO"/>
+		<result property="titulo" column="TT_PRODUTO"/>
+		<result property="vlPreco" column="VL_PRECO" />
+		<result property="qtdMaximaSabor" column="QTD_MAX_SABOR" />
+		<result property="maiorPreco" column="BO_MAIOR_PRECO"/>
+		<result property="produtoDivididoNrSaborRoundUP" column="BO_PROD_DIVIDIDO_NR_SABOR_ROUNDUP"/>
+		<result property="ativo" column="BO_ATIVO"/>
+		
+		<association property="classificacao" column="ID_CLASSIFICACAO"
+			javaType="Classificacao" jdbcType="VARCHAR">
+			<id property="id" column="ID_CLASSIFICACAO" />
+			<result property="titulo" column="TT_CLASSIFICACAO" />
+		</association>
+		
+		<association property="filial" column="ID_FILIAL"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_FILIAL" />
+		</association>
+		
+	</resultMap>
+	
+	<resultMap id="result" type="Produto" extends="resultSimples" >			
+		<collection property="sabores" ofType="Sabor"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.SaborMapper.findSaboresByProduto"
+			column="{idProduto=ID_PRODUTO}" />
+
+		<collection property="opcionais" ofType="Opcional"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.OpcionalMapper.findOpcionaisByProduto"
+			column="{idProduto=ID_PRODUTO}" />
+			
+			
+	</resultMap>
+	
+	<resultMap id="resultAndroid" type="Produto" extends="resultSimples" >			
+		<collection property="sabores" ofType="Sabor"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.SaborMapper.findSaboresByProdutoAndroid"
+			column="{idProduto=ID_PRODUTO}" />
+
+		<collection property="opcionais" ofType="Opcional"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.concepto.model.entity.OpcionalMapper.findOpcionaisByProdutoAndroid"
+			column="{idProduto=ID_PRODUTO}" />
+			
+			
+	</resultMap>
+	
+	<select id="defaultProdutoId" resultMap="resultId">
+		${clause}
+	</select>
+	
+	<select id="findProduto" resultMap="result">
+		select * from bs_produto 
+			inner join bs_classificacao c on c.id_classificacao = bs_produto.id_classificacao
+			WHERE ${condition} 
+	</select>
+		
+	<select id="defaultProduto" resultMap="resultSimples">
+		${clause}
+	</select>
+	
+	<select id="findProdutosAtivos" resultMap="resultSimples">
+		select * from bs_produto where
+		${condition}  order by id_produto desc limit 100
+	</select>
+	
+	<select id="findProdutosByClassificacao" resultMap="resultAndroid">
+		select * from bs_produto where id_classificacao = #{idClassificacao} and bo_ativo = true order by DS_PRODUTO desc 
+	</select>
+
+	<select id="findById" resultMap="result">
+		select bs_produto.* from bs_produto 
+			inner join bs_classificacao c on c.id_classificacao = bs_produto.id_classificacao
+			WHERE bs_produto.id_produto = #{id} and bs_produto.id_filial =#{filial}
+	</select>
+	
+	
+	
+</mapper>

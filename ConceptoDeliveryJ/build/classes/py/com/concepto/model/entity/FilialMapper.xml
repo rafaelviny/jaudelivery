@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.FilialMapper">
+	<resultMap id="resultId" type="Filial">
+		<id property="id" column="ID_FILIAL" javaType="Long" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Filial" extends="resultId">
+		<result property="descricao" column="DS_FILIAL" />
+		<result property="cidade" column="CIDADE" />
+		<result property="endereco" column="ENDERECO" />
+		<result property="horarioAtencao" column="HORARIO_ATENCAO" />
+		<result property="ruc" column="RUC" />
+		<result property="ativo" column="ATIVO"/>
+		<result property="aberto" column="BO_ABERTO"/>
+		<result property="principal" column="BO_PRINCIPAL" />
+		<result property="logo" column="LOGO" />
+		<result property="logoPrincipal" column="LOGO_PRINCIPAL" />
+
+	</resultMap>
+
+	<resultMap id="result" type="Filial" extends="resultSimples">
+		<association property="empresa" column="ID_EMPRESA"
+			javaType="Empresa" jdbcType="VARCHAR">
+			<id property="id" column="ID_EMPRESA" javaType="Long" jdbcType="VARCHAR" />
+			<result property="descricao" column="DS_EMPRESA" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="ativo" column="BO_ATIVO" javaType="Boolean"
+				jdbcType="BOOLEAN" />
+		</association>
+	</resultMap>
+
+	<sql id="sqlDefault">select * from filial </sql>
+
+	<select id="defaultFilialId" resultMap="resultId">${clause}</select>
+
+	<select id="defaultFilial" resultMap="result">${clause}</select>
+
+	<select id="findFilial" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ${condition}
+	</select>
+
+
+	<update id="abreLocal">
+		update filial set bo_aberto = true where id_filial = #{id}
+	</update>
+
+	<update id="fechaLocal">
+		update filial set bo_aberto = false where id_filial = #{id}
+	</update>
+
+
+
+<!-- USADO POR OUTROS MAPPERS -->
+	
+	<select id="findListFilialByEmpresaId" resultMap="result" parameterType="hashMap">
+		SELECT * FROM empresa INNER JOIN filial ON filial.id_empresa = empresa.id_empresa WHERE EMPRESA.ID_EMPRESA = #{idEmpresa}
+	</select>
+	
+	<select id="findListFilialByUsuarioId" resultMap="result" parameterType="hashMap">
+		SELECT * FROM  filial INNER JOIN sys_usuario_filial usuario_filial ON filial.ID_FILIAL = usuario_filial.ID_FILIAL
+		INNER JOIN SYS_USUARIO USUARIO ON usuario.ID_USUARIO = usuario_filial.ID_USUARIO
+		INNER JOIN empresa ON empresa.ID_EMPRESA = filial.ID_EMPRESA
+		WHERE usuario.ID_USUARIO = #{idUsuario}
+	</select>
+	
+	
+	<select id="findFilialById"  parameterType="hashMap" resultType="Filial" resultMap="resultSimples"> 
+		SELECT * FROM filial WHERE id_filial = #{idFilial}  
+	</select>
+	
+	
+		<select id="findFiliaisByCidade" resultMap="result">
+			select * from filial WHERE id_cidade = #{idCidade} and bo_ativo = true ORDER BY BO_ABERTO DESC
+	</select>
+</mapper>

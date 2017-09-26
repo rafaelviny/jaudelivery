@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="remoting-service" class="flex.messaging.services.RemotingService">
+
+	<adapters>
+		<adapter-definition id="java-object"
+			class="br.com.db1.flexadapter.DB1JavaAdapter" default="true" />
+	</adapters>
+
+	<default-channels>
+		<channel ref="my-amf" />
+	</default-channels>
+
+
+	<destination id="empresaService">
+		<properties>
+			<factory>spring</factory>
+			<source>empresaService</source>
+		</properties>
+	</destination>
+
+	<destination id="filialService">
+		<properties>
+			<factory>spring</factory>
+			<source>filialService</source>
+		</properties>
+	</destination>
+
+	<destination id="usuarioService">
+		<properties>
+			<factory>spring</factory>
+			<source>usuarioService</source>
+		</properties>
+	</destination>
+
+	<destination id="classificacaoService">
+		<properties>
+			<factory>spring</factory>
+			<source>classificacaoService</source>
+		</properties>
+	</destination>
+
+	<destination id="produtoService">
+		<properties>
+			<factory>spring</factory>
+			<source>produtoService</source>
+		</properties>
+	</destination>
+
+	<destination id="deliveryService">
+		<properties>
+			<factory>spring</factory>
+			<source>deliveryService</source>
+		</properties>
+	</destination>
+
+	<destination id="importacaoXMLBodegaService">
+		<properties>
+			<factory>spring</factory>
+			<source>importacaoXMLBodegaService</source>
+		</properties>
+	</destination>
+
+
+</service>

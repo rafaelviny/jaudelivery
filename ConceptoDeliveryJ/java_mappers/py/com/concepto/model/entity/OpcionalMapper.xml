@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.OpcionalMapper">
+	<resultMap id="resultId" type="Opcional">
+		<id property="id" column="ID_OPCIONAL" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Opcional" extends="resultId">
+		<result property="descricao" column="DS_OPCIONAL" />
+		<result property="titulo" column="TT_OPCIONAL" />
+		<result property="ativo" column="BO_ATIVO" />
+		<result property="vlPreco" column="VL_PRECO" />
+
+		<association property="produto" column="ID_PRODUTO"
+			javaType="Produto">
+			<id property="id" column="ID_PRODUTO" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="Opcional" extends="resultSimples" />
+
+	<select id="defaultOpcionalId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<select id="findOpcional" resultMap="result">
+		select * from bs_opcional WHERE
+		${condition}
+	</select>
+
+	<select id="defaultOpcional" resultMap="resultSimples">
+		${clause}
+	</select>
+
+
+	<!-- ********************************** SELECTS DE MAPPERS EXTERNOS ********************************** -->
+
+	<!-- USADO POR OUTROS MAPPERS -->
+	<!-- USADO PARA PESQUISAR 1-N (MAPPER CONTA NOTAFISCAL) -->
+	<select id="findOpcionaisByProduto" resultMap="resultSimples"
+		parameterType="hashMap">
+		select * from bs_opcional where id_produto = #{idProduto}
+	</select>
+	
+	<select id="findOpcionaisByProdutoAndroid" resultMap="resultSimples"
+		parameterType="hashMap">
+		select * from bs_opcional where id_produto = #{idProduto} and bo_ativo
+	</select>
+
+
+</mapper>

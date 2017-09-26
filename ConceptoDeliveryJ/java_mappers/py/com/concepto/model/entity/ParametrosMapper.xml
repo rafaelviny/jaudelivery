@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ParametrosMapper">
+	<resultMap id="resultId" type="Parametros">
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Parametros" extends="resultId">
+		<result property="parametro" column="PARAMETRO" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="valor" column="VALOR" javaType="String"
+			jdbcType="VARCHAR" />
+		
+	</resultMap>
+
+	<resultMap id="result" type="Parametros" extends="resultSimples">
+
+	</resultMap>
+
+	
+	<!-- ********************************** SELECTS DO PADRAO  ********************************** -->
+
+	<sql id="sqlDefault">
+		SELECT * FROM SYS_PARAMETROS 
+	  </sql>
+
+	<select id="defaultParametrosId" resultMap="resultId">
+		${clause} 
+	</select>
+			
+	<select id="defaultParametros" resultMap="result">
+		${clause} 
+	</select>
+
+	<select id="findParametros" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ${condition} 
+	</select>
+
+
+ 
+	
+	
+	
+
+</mapper>

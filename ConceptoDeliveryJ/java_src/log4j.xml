@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%p - %C{1}.%M(%L) | %m%n"/>
+        </layout>
+    </appender>
+
+
+
+
+
+
+    <category name="java.sql">
+        <priority value="DEBUG" />
+    </category>
+    
+    <category name="java.sql.Statement">
+        <priority value="DEBUG" />
+    </category>
+    
+    
+    <category name="org.apache.ibatis">
+        <priority value="DEBUG" />
+    </category>
+    
+    
+    <category name="br.com.db1.myBatisPersistence">
+        <priority value="DEBUG" />
+    </category>   
+
+
+         
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</log4j:configuration>
+<!-- 
+	NÍVEIS DE LOG DO MAIOR PARA A MENOR PRIORIDADE:
+	> FATAL
+	> ERROR
+	> WARN
+	> INFO
+	> DEBUG
+	> TRACE
+ -->

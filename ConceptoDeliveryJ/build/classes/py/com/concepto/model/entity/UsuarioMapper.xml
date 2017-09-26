@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.UsuarioMapper">
+	<resultMap id="resultId" type="Usuario">
+		<id property="id" column="ID_USUARIO" javaType="Long" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="resultSimples" type="Usuario" extends="resultId">
+		<result property="codigo" column="CD_USUARIO" javaType="Long"
+			jdbcType="VARCHAR" />
+		<result property="nome" column="NM_USUARIO" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="login" column="LOGIN" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="senha" column="SENHA" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="senha" column="SENHA" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="ativo" column="BO_ATIVO" javaType="Boolean"
+			jdbcType="BOOLEAN" />
+		<result property="primeiroAcesso" column="BO_PRIMEIROACESSO"
+			javaType="Boolean" jdbcType="BOOLEAN" />
+		<result property="salvarSenha" column="BO_SALVARSENHA"
+			javaType="Boolean" jdbcType="BOOLEAN" />
+	</resultMap>
+ 	<resultMap id="result" type="Usuario" extends="resultSimples"> 
+  			<collection property="usuarioFilialList" column="{idUsuario=ID_USUARIO}"  javaType="ArrayList"
+ 			ofType="UsuarioFilial" jdbcType="VARCHAR" select="py.com.concepto.model.entity.UsuarioFilialMapper.findListUsuarioFilialByUsuarioId"/>  
+	</resultMap>
+
+
+
+
+	<sql id="sqlDefault">
+		select * from sys_usuario
+  </sql>
+
+	<select id="defaultUsuarioId" resultMap="resultId">${clause}</select>
+	<select id="defaultUsuario" resultMap="resultSimples">
+		${clause} 
+	</select>
+	<select id="findUsuario" resultMap="resultSimples">
+		<include refid="sqlDefault" />
+		where ${condition}
+	</select>
+	<select id="findUsuarioNotInControleAcesso" resultMap="resultSimples">
+		<include refid="sqlDefault" />
+		where ${condition}  and id_usuario NOT IN ( SELECT id_usuario FROM sys_controle_acesso )
+	</select>
+	
+	<select id="findUsuarioByAutentificacao" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE login = #{login} AND senha = #{senha}
+	</select>
+	
+	
+
+</mapper>

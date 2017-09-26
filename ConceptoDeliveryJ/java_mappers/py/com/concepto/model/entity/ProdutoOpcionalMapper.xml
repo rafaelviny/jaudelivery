@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ProdutoOpcionalMapper">
+	<resultMap id="resultId" type="ProdutoOpcional">
+		<id property="id" column="ID_PRODUTO_OPCIONAL" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="ProdutoOpcional" extends="resultId">
+
+		<association property="deliveryItem" column="ID_DELIVERY_ITEM" javaType="DeliveryItem">
+			<id property="id" column="ID_DELIVERY_ITEM" />
+		</association>
+
+		<association property="opcional" column="ID_OPCIONAL"
+			javaType="Opcional">
+			<result property="descricao" column="DS_OPCIONAL" />
+			<result property="titulo" column="TT_OPCIONAL" />
+			<result property="vlPreco" column="VL_PRECO" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="ProdutoOpcional" extends="resultSimples">
+	</resultMap>
+
+	<select id="defaultProdutoOpcionalId" resultMap="resultId">
+		${clause}
+	</select>
+
+
+	<select id="findProdutoOpcional" resultMap="result">
+		<include refid="sqlDefault" />
+		WHERE ${condition}
+	</select>
+
+	<sql id="sqlDefault">
+		SELECT 
+		  ven_produto_opcional.*,
+		  o.ID_OPCIONAL,
+		  o.TT_OPCIONAL,
+		  o.VL_PRECO
+		FROM
+		  ven_produto_opcional ven_produto_opcional 
+		  INNER JOIN bs_opcional o 
+		    ON o.ID_OPCIONAL = ven_produto_opcional.ID_OPCIONAL 
+	</sql>
+
+	<select id="defaultProdutoOpcional" resultMap="resultSimples">
+		${clause}
+	</select>
+
+
+
+	<select id="findProdutoOpcionalByItemDelivery" resultMap="resultSimples"
+		parameterType="hashMap">
+		<include refid="sqlDefault" />
+		 where ven_produto_opcional.ID_DELIVERY_ITEM = #{idItemDelivery}
+	</select>
+
+
+
+
+</mapper>

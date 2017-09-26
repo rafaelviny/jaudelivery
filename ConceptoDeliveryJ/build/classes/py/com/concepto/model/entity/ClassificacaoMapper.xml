@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ClassificacaoMapper">
+	<resultMap id="resultId" type="Classificacao">
+		<id property="id" column="ID_CLASSIFICACAO" />
+	</resultMap>
+
+	<resultMap id="resultSimples" type="Classificacao" extends="resultId">
+		<result property="titulo" column="TT_CLASSIFICACAO" />
+		<result property="descricao" column="DS_CLASSIFICACAO" />
+		<result property="ativo" column="BO_ATIVO" />
+
+		<association property="filial" column="ID_FILIAL"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_FILIAL" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="result" type="Classificacao" extends="resultSimples" />
+
+	<select id="defaultClassificacaoId" resultMap="resultId">
+		${clause}
+	</select>
+
+	<select id="findClassificacao" resultMap="result">
+		SELECT * FROM
+		bs_classificacao WHERE ${condition}
+	</select>
+
+	<select id="defaultClassificacao" resultMap="resultSimples">
+		${clause}
+	</select>
+
+	<select id="findClassificacoesAtivos" resultMap="resultSimples">
+		SELECT * FROM
+		bs_classificacao WHERE BO_ATIVO = true and id_filial = #{idEmpresa}
+	</select>
+
+	<select id="findPesquisaClassificacao" resultMap="resultSimples">
+		SELECT * FROM
+		bs_classificacao where ${condition}
+	</select>
+
+
+
+
+</mapper>

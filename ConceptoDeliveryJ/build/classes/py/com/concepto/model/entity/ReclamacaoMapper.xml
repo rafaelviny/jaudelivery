@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.concepto.model.entity.ReclamacaoMapper">
+	<resultMap id="resultId" type="Reclamacao">
+		<id property="id" column="ID_RECLAMACAO"  />
+	</resultMap>
+	
+	<resultMap id="resultSimples" type="Reclamacao" extends="resultId">
+		<result property="observacao" column="OBSERVACAO"/>
+		<result property="dtReclamacao" column="DT_RECLAMACAO"/>
+		
+		<association property="cliente" column="ID_CLIENTE"
+			javaType="Cliente" jdbcType="VARCHAR">
+			<id property="id" column="ID_CLIENTE" />
+		</association>
+				
+		<association property="filial" column="ID_FILIAL"
+			javaType="Filial" jdbcType="VARCHAR">
+			<id property="id" column="ID_FILIAL" />
+		</association>
+		
+	</resultMap>
+	
+	<resultMap id="result" type="Reclamacao" extends="resultSimples" />
+	
+	<sql id="sqlDefault">
+		SELECT 
+		  bs_reclamacao.*,
+		  f.ID_FILIAL,
+		  f.DS_FILIAL ,
+		  c.ID_CLIENTE,
+		  c.NM_CLIENTE
+		FROM
+		  bs_reclamacao 
+		  INNER JOIN bs_cliente c 
+		    ON c.ID_CLIENTE = bs_reclamacao.ID_CLIENTE 
+		  INNER JOIN filial f 
+		    ON f.ID_FILIAL = bs_reclamacao.ID_FILIAL 
+	</sql>
+	
+	<select id="defaultReclamacaoId" resultMap="resultId">
+		${clause}
+	</select>
+	
+	<select id="findReclamacao" resultMap="result">
+		select * from bs_sabor WHERE ${condition} 
+	</select>
+		
+	<select id="defaultReclamacao" resultMap="resultSimples">
+		${clause}
+	</select>
+	
+	
+	<!-- ********************************** SELECTS DE MAPPERS EXTERNOS  ********************************** -->
+	
+	
+	<select id="findReclamacaoesByCliente" resultMap="resultSimples" parameterType="hashMap">
+		select * from bs_reclamacao where id_cliente = #{idCliente}
+	</select>
+	
+	
+	
+	
+	
+</mapper>
